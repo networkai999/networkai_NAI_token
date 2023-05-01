@@ -26,29 +26,17 @@ contract NetworkAi is ERC20,Ownable , ERC20Permit, ERC20Votes  {
     constructor() ERC20("NetworkAi", "NAI") ERC20Permit("NetworkAi") {
         _primaryOwner = msg.sender;
         _mint(_primaryOwner, _mintAmount);
-        _balances[_primaryOwner] = ownerAmount;
-        emit TransferMint(_primaryOwner, ownerAmount);
+        _balances[_primaryOwner] = _mintAmount;
+        emit TransferMint(_primaryOwner, _mintAmount);
 
     }
 
 
-    function transfer(address _receiver,uint256 _amount) public override returns (bool) {
-
-
-        require(_balances[msg.sender] >= _amount, "Insufficient balance");
-        require(_receiver != msg.sender , "You cannot transfer to yourself");
-        
-        _beforeTokenTransfer(msg.sender, _receiver, _amount);
-
-        _balances[msg.sender] = _balances[msg.sender] - _amount;
-        _balances[_receiver] = _balances[_receiver] + _amount;
-
-        emit TransferSent(msg.sender, _receiver, _amount);
-        _afterTokenTransfer(msg.sender, _receiver, _amount);
-        emit Transfer(msg.sender, _receiver, _amount);
-        
+    function transfer(address _receiver,uint256 _amount) public virtual override returns (bool) {
+        require(_amount <= _balances[msg.sender],"This wallet does not have enough balace to send");
+        _transfer(_msgSender(), _receiver, _amount);
         return true;
-       
+        
     }
 
     event Received(address, uint);
