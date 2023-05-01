@@ -105,17 +105,17 @@
 					{
 						"indexed": false,
 						"internalType": "address",
-						"name": "_owner",
+						"name": "",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "value",
+						"name": "",
 						"type": "uint256"
 					}
 				],
-				"name": "Transfer",
+				"name": "Received",
 				"type": "event"
 			},
 			{
@@ -144,6 +144,50 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "TransferMint",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_from",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "TransferSent",
+				"type": "event"
+			},
+			{
 				"inputs": [],
 				"name": "DOMAIN_SEPARATOR",
 				"outputs": [
@@ -160,7 +204,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_to",
+						"name": "_receiver",
 						"type": "address"
 					}
 				],
@@ -709,6 +753,10 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
@@ -946,11 +994,11 @@
 			]
 		},
 		"contracts/Token.sol": {
-			"keccak256": "0x9ca88fefa520a22332bdfbe91b454629ff5db78c995800fbc192f131aa9c2d3a",
+			"keccak256": "0x6f4baf57f486f7656a68b80b6f27f7ca9723efdba3663972b6a57bdff0b7446e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3c1d969fe98e73791aaf62f47071acda34be893fe3dc081b2cf4edb2e323d938",
-				"dweb:/ipfs/QmU8mdNKY1XHytRfFqzaeb66odnCYWH3o9QR4CSbqNdUN9"
+				"bzz-raw://7c3f5a7143018445cc6a36b715f6506ed3ec06e4a119427535baab21a24a9159",
+				"dweb:/ipfs/QmbBbsbhE1SSuAatwi1ZeSgyj83g9U9JihSrX3kanYEXv3"
 			]
 		},
 		"remix_tests.sol": {
