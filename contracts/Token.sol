@@ -12,27 +12,24 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 contract NetworkAi is ERC20,Ownable , ERC20Permit, ERC20Votes , ERC20Capped  {
-   
-    // address owner
-    address primaryOwner;
-    // initial mint amount
-    uint256 mintAmount = 100000000 * 10**18;
-    // number of reward tokens issued
-    uint256 supplementaryTkRicompense;
-    // max supply
-    uint256 maxSupply = 150000000 * 10**18;
-    // tokens for tasks completed by users
-    uint256 ricompense = 10 * 10**18;
-    // Check whether the user can claim his or her tokens 
-    uint256 private _tokenChecker = 10278359485746330984340085;
-    // Counter that calculates how many times tokens have been claimed
-    int claimedCount = 0;
-    // tokens released from rewards
-    int tokenReleasedFR = 0;
-    // max ricompense for claim
-    uint256 maxRicompense = 50000000 * 10**18;
+        
+        
     
 
+    
+    // address owner
+    address primaryOwner;
+    address payable public _owner;
+    // initial mint amount ---  1Mrd
+    uint256 initialAmount = 1000000000 * 10**18; 
+    // max mintable after first mint ---  1Mrd
+    uint256 maxMintable = 1000000000 * 10**18;
+    // max supply ---  2Mrd
+    uint256 maxSupply = initialAmount + maxMintable;
+    // mined tokens
+    uint256 minedTokens;
+    
+ 
 
     mapping (address => uint256) public _balances;
     event TransferSent(address _from,address _to, uint256 _amount);
@@ -43,68 +40,50 @@ contract NetworkAi is ERC20,Ownable , ERC20Permit, ERC20Votes , ERC20Capped  {
     }
     
     
+    
     constructor() ERC20("NetworkAi", "NAI") ERC20Permit("NetworkAi") ERC20Capped(maxSupply) {
         primaryOwner = msg.sender;
-        _mint(primaryOwner, mintAmount);
-        _balances[primaryOwner] = mintAmount;
+        _mint(primaryOwner, initialAmount);
+        _balances[primaryOwner] = initialAmount;
+        _owner = payable(msg.sender);
 
-        emit TransferMint(primaryOwner, mintAmount);
-
+        emit TransferMint(primaryOwner, initialAmount);
+        
     }
 
 
     function transfer(address _receiver,uint256 _amount) public virtual override returns (bool) {
         require(_amount <= _balances[msg.sender],"This wallet does not have enough balace to send");
         _transfer(_msgSender(), _receiver, _amount);
+        emit Transfer(_msgSender(), _receiver, _amount);
+        emit Received(_msgSender(),_amount);
         return true;
         
     }
-
-
-    function getClaim(address _receiver,uint256 _receiverToken) public  {
-        
-        require(_receiverToken == _tokenChecker, "You can't get your tokens");
-        require(supplementaryTkRicompense <= (maxRicompense - ricompense) , 
-            "Maximum rewards achieved"
-        );
-
-        NetworkAi._mint(_receiver, ricompense);
-        _balances[_receiver] = ricompense;
-       
-        supplementaryTkRicompense += ricompense;
-        emit TransferMint(_receiver, ricompense);
-
-        // ++counter rewards
-        claimedCount++;
-
-        // + tokenReleasedFR
-        tokenReleasedFR +=  10;
-
-    }
-
 
 
     function balanceOf() public view returns (uint256) {
         return _balances[msg.sender];
     }
 
-    // Function that returns the count of reward requests
-    function countRewards() public view returns (int) {
-        return claimedCount;
+
+    function tokenBalance() public view returns (uint256) {
+        return _balances[address(this)];
     }
 
-    // Function that returns the number of tokens released so far from the rewards
-    function tokenRFR() public view returns (int) {
-        return tokenReleasedFR;
-    }
-    
+
     // returns max supply
     function getMaxSupply() public view returns (uint256) {
         return maxSupply;
     }
 
-    // return supply in this moment
-    function getSupply() public view returns (uint256) {
+    // returns the tokens mined so far
+    function getMinedToken() public view returns (uint256) {
+        return minedTokens;
+    }
+
+    // return token mined 
+    function getTotalSupply() public view returns (uint256) {
         return totalSupply();
     }
 
@@ -130,5 +109,22 @@ contract NetworkAi is ERC20,Ownable , ERC20Permit, ERC20Votes , ERC20Capped  {
     {
         super._burn(account, amount);
     }
+
+
+    function requestTokens (address requestor , uint256 amount) public  {
+        //mint tokens
+        require(maxMintable >= minedTokens + amount,"The minable maximum has been reached" );
+        _mint(requestor, amount);
+        _balances[requestor] = amount;
+        emit TransferMint(requestor, amount);
+
+        minedTokens += amount;
+        
+    }
+
+
+
     
 }
+
+
